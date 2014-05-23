@@ -1,5 +1,11 @@
 package consuldiscovery
 
+// Catalog is a set of functions to find services information
+type Catalog interface {
+	CatalogServices() CatalogServices
+	CatalogServiceByName(name string) CatalogServiceByName
+}
+
 // catalogServicesResponse maps GET /v1/catalog/services response
 // From API response: {"consul":null,"simple_service":["tag1","tag2"]}
 type catalogServicesResponse map[string][]string
@@ -25,12 +31,6 @@ type CatalogServiceNode struct {
 	ServiceName string
 	ServiceTags []string
 	ServicePort uint64
-}
-
-// Catalog is a set of functions to find services information
-type Catalog interface {
-	CatalogServices() CatalogServices
-	CatalogServiceByName(name string) CatalogServiceByName
 }
 
 // CatalogServices returns a list of advertised service names and their tags
