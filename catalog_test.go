@@ -13,7 +13,7 @@ func getClient(t *testing.T) *Client {
 	return client
 }
 
-func TestClient(t *testing.T) {
+func TestCatalog(t *testing.T) {
 	Convey("ServiceList", t, func() {
 		client := getClient(t)
 		services, err := client.ServiceList()
