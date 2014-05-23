@@ -5,7 +5,25 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
+func getCurrentNodeName() string {
+	return "drnic.local"
+}
+
 func TestHealth(t *testing.T) {
+	Convey("HealthByNode", t, func() {
+		client := getClient(t)
+		checks, err := client.HealthByNode(getCurrentNodeName())
+		So(err, ShouldEqual, nil)
+		So(len(checks), ShouldEqual, 3)
+	})
+
+	Convey("HealthByState", t, func() {
+		client := getClient(t)
+		checks, err := client.HealthByState("critical")
+		So(err, ShouldEqual, nil)
+		So(len(checks), ShouldEqual, 1)
+	})
+
 	Convey("HealthByService", t, func() {
 		client := getClient(t)
 		nodes, err := client.HealthByService("simple_service")
@@ -19,10 +37,4 @@ func TestHealth(t *testing.T) {
 		So(check.Status, ShouldEqual, "passing")
 	})
 
-  Convey("HealthByState", t, func() {
-    client := getClient(t)
-    checks, err := client.HealthByState("critical")
-    So(err, ShouldEqual, nil)
-    So(len(checks), ShouldEqual, 1)
-  })
 }

@@ -2,8 +2,9 @@ package consuldiscovery
 
 // Health is a set of functions for the health of services
 type Health interface {
-	HealthByService(serviceName string)
-  HealthByState(state string)
+	HealthByNode(nodeName string) ([]HealthServiceCheck, error)
+	HealthByService(serviceName string) (HealthServiceNodes, error)
+	HealthByState(state string) ([]HealthServiceCheck, error)
 }
 
 // [{"Node":{"Node":"drnic.local","Address":"192.168.50.1"},
@@ -46,7 +47,15 @@ type HealthServiceCheck struct {
 	ServiceName string
 }
 
-// ServiceHealth returns a list of advertised service names and their tags
+// HealthByNode returns the health checks for a specific node
+func (c *Client) HealthByNode(nodeName string) (result []HealthServiceCheck, err error) {
+	if err = c.doGET("health/node/"+nodeName, &result); err != nil {
+		return
+	}
+	return
+}
+
+// HealthByService returns a list of advertised service names and their tags
 func (c *Client) HealthByService(serviceName string) (result HealthServiceNodes, err error) {
 	if err = c.doGET("health/service/"+serviceName, &result); err != nil {
 		return
@@ -54,9 +63,10 @@ func (c *Client) HealthByService(serviceName string) (result HealthServiceNodes,
 	return
 }
 
+// HealthByState returns the health checks with a specific state
 func (c *Client) HealthByState(state string) (checks []HealthServiceCheck, err error) {
-  if err = c.doGET("health/state/"+state, &checks); err != nil {
-    return
-  }
-  return
+	if err = c.doGET("health/state/"+state, &checks); err != nil {
+		return
+	}
+	return
 }
