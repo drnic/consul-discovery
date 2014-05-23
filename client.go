@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"os"
 	"path"
 	"regexp"
 	"time"
@@ -50,6 +51,7 @@ func DefaultConfig() *Config {
 	return &Config{
 		Address:    "127.0.0.1:8500",
 		HTTPClient: http.DefaultClient,
+		Debug:      (os.Getenv("DEBUG") != ""),
 	}
 }
 
