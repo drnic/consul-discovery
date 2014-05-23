@@ -13,8 +13,8 @@ type CatalogService struct {
 	Tags []string
 }
 
-// CatalogServiceNodes contains the nodes composing a service
-type CatalogServiceNodes []CatalogServiceNode
+// CatalogCatalogServiceByName contains the nodes composing a service
+type CatalogCatalogServiceByName []CatalogServiceNode
 
 // CatalogServiceNode describes a single node of a service
 // From API response:  {"Node":"drnic.local","Address":"192.168.50.1","ServiceID":"simple_service","ServiceName":"simple_service","ServiceTags":["tag1","tag2"],"ServicePort":6666}
@@ -29,12 +29,12 @@ type CatalogServiceNode struct {
 
 // Catalog is a set of functions to find services information
 type Catalog interface {
-	ServiceList() CatalogServices
-	ServiceNodes(name string) CatalogServiceNodes
+	CatalogServices() CatalogServices
+	CatalogServiceByName(name string) CatalogCatalogServiceByName
 }
 
-// ServiceList returns a list of advertised service names and their tags
-func (c *Client) ServiceList() (result CatalogServices, err error) {
+// CatalogServices returns a list of advertised service names and their tags
+func (c *Client) CatalogServices() (result CatalogServices, err error) {
 	services := catalogServicesResponse{}
 	if err = c.doGET("catalog/services", &services); err != nil {
 		return
@@ -49,8 +49,8 @@ func (c *Client) ServiceList() (result CatalogServices, err error) {
 	return
 }
 
-// ServiceNodes returns a list of nodes composing a service
-func (c *Client) ServiceNodes(name string) (nodes CatalogServiceNodes, err error) {
+// CatalogServiceByName returns a list of nodes composing a service
+func (c *Client) CatalogServiceByName(name string) (nodes CatalogCatalogServiceByName, err error) {
 	err = c.doGET("catalog/service/"+name, &nodes)
 	return
 }

@@ -14,18 +14,18 @@ func getClient(t *testing.T) *Client {
 }
 
 func TestCatalog(t *testing.T) {
-	Convey("ServiceList", t, func() {
+	Convey("CatalogServices", t, func() {
 		client := getClient(t)
-		services, err := client.ServiceList()
+		services, err := client.CatalogServices()
 		So(err, ShouldEqual, nil)
 		So(len(services), ShouldEqual, 2)
 		So(services[0].Name, ShouldEqual, "consul")
 		So(services[1].Name, ShouldEqual, "simple_service")
 	})
 
-	Convey("ServiceNodes", t, func() {
+	Convey("CatalogServiceByName", t, func() {
 		client := getClient(t)
-		nodes, err := client.ServiceNodes("simple_service")
+		nodes, err := client.CatalogServiceByName("simple_service")
 		So(err, ShouldEqual, nil)
 		So(len(nodes), ShouldEqual, 1)
 		So(nodes[0].ServiceID, ShouldEqual, "simple_service")
