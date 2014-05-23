@@ -55,61 +55,6 @@ func DefaultConfig() *Config {
 	}
 }
 
-// catalogServicesResponse maps GET /v1/catalog/services response
-// From API response: {"consul":null,"simple_service":["tag1","tag2"]}
-type catalogServicesResponse map[string][]string
-
-// CatalogServices contains the available service names and their tags
-type CatalogServices []CatalogService
-
-// CatalogService contains a single available service name and its tags
-type CatalogService struct {
-	Name string
-	Tags []string
-}
-
-// CatalogServiceNodes contains the nodes composing a service
-type CatalogServiceNodes []CatalogServiceNode
-
-// CatalogServiceNode describes a single node of a service
-// From API response:  {"Node":"drnic.local","Address":"192.168.50.1","ServiceID":"simple_service","ServiceName":"simple_service","ServiceTags":["tag1","tag2"],"ServicePort":6666}
-type CatalogServiceNode struct {
-	Node        string
-	Address     string
-	ServiceID   string
-	ServiceName string
-	ServiceTags []string
-	ServicePort uint64
-}
-
-// Catalog is a set of functions to find services information
-type Catalog interface {
-	ServiceList() CatalogServices
-	ServiceNodes(name string) CatalogServiceNodes
-}
-
-// ServiceList returns a list of advertised service names and their tags
-func (c *Client) ServiceList() (result CatalogServices, err error) {
-	services := catalogServicesResponse{}
-	if err = c.doGET("catalog/services", &services); err != nil {
-		return
-	}
-
-	// Convert {"name" => ["tags"]} into []CatalogService
-	for name, tags := range services {
-		service := CatalogService{Name: name, Tags: tags}
-		result = append(result, service)
-	}
-
-	return
-}
-
-// ServiceNodes returns a list of nodes composing a service
-func (c *Client) ServiceNodes(name string) (nodes CatalogServiceNodes, err error) {
-	err = c.doGET("catalog/service/"+name, &nodes)
-	return
-}
-
 func (c *Client) doGET(endpoint string, data interface{}) (err error) {
 	url := c.pathURL(endpoint)
 	req := http.Request{
@@ -127,7 +72,6 @@ func (c *Client) doGET(endpoint string, data interface{}) (err error) {
 	if c.config.Debug {
 		fmt.Println(sanitize(string(dumpedResponse)))
 	}
-
 	if err != nil {
 		return
 	}
