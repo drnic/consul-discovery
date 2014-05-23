@@ -52,3 +52,10 @@ func (c *Client) ServiceHealth(serviceName string) (result HealthServiceNodes, e
 	}
 	return
 }
+
+func (c *Client) ServiceChecksByState(state string) (checks []HealthServiceCheck, err error) {
+  if err = c.doGET("health/state/"+state, &checks); err != nil {
+    return
+  }
+  return
+}

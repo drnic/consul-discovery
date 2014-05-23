@@ -14,8 +14,15 @@ func TestHealth(t *testing.T) {
 		node := nodes[0]
 		So(node.Service.ServiceID, ShouldEqual, "simple_service")
 		So(node.Service.ServiceName, ShouldEqual, "simple_service")
-		So(len(node.Checks), ShouldEqual, 1)
+		So(len(node.Checks), ShouldEqual, 3)
 		check := node.Checks[0]
 		So(check.Status, ShouldEqual, "passing")
 	})
+
+  Convey("ServiceChecksByState", t, func() {
+    client := getClient(t)
+    checks, err := client.ServiceChecksByState("critical")
+    So(err, ShouldEqual, nil)
+    So(len(checks), ShouldEqual, 1)
+  })
 }

@@ -1,0 +1,8 @@
+{
+    "check": {
+        "id": "check-passing",
+        "name": "Always true",
+        "script": "true",
+        "interval": "100s"
+    }
+}
