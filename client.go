@@ -133,23 +133,23 @@ func (c *Client) pathURL(endpoint string) *url.URL {
 }
 
 const (
-	PRIVATE_DATA_PLACEHOLDER = "[PRIVATE DATA HIDDEN]"
+	privateDataPlaceholder = "[PRIVATE DATA HIDDEN]"
 )
 
 func sanitize(input string) (sanitized string) {
-	var sanitizeJson = func(propertyName string, json string) string {
+	var sanitizeJSON = func(propertyName string, json string) string {
 		re := regexp.MustCompile(fmt.Sprintf(`"%s":"[^"]*"`, propertyName))
-		return re.ReplaceAllString(json, fmt.Sprintf(`"%s":"`+PRIVATE_DATA_PLACEHOLDER+`"`, propertyName))
+		return re.ReplaceAllString(json, fmt.Sprintf(`"%s":"`+privateDataPlaceholder+`"`, propertyName))
 	}
 
 	re := regexp.MustCompile(`(?m)^Authorization: .*`)
-	sanitized = re.ReplaceAllString(input, "Authorization: "+PRIVATE_DATA_PLACEHOLDER)
+	sanitized = re.ReplaceAllString(input, "Authorization: "+privateDataPlaceholder)
 	re = regexp.MustCompile(`password=[^&]*&`)
-	sanitized = re.ReplaceAllString(sanitized, "password="+PRIVATE_DATA_PLACEHOLDER+"&")
+	sanitized = re.ReplaceAllString(sanitized, "password="+privateDataPlaceholder+"&")
 
-	sanitized = sanitizeJson("access_token", sanitized)
-	sanitized = sanitizeJson("refresh_token", sanitized)
-	sanitized = sanitizeJson("token", sanitized)
+	sanitized = sanitizeJSON("access_token", sanitized)
+	sanitized = sanitizeJSON("refresh_token", sanitized)
+	sanitized = sanitizeJSON("token", sanitized)
 
 	return
 }
