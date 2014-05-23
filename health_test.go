@@ -14,5 +14,8 @@ func TestHealth(t *testing.T) {
 		node := nodes[0]
 		So(node.Service.ServiceID, ShouldEqual, "simple_service")
 		So(node.Service.ServiceName, ShouldEqual, "simple_service")
+		So(len(node.Checks), ShouldEqual, 1)
+		check := node.Checks[0]
+		So(check.Status, ShouldEqual, "passing")
 	})
 }
