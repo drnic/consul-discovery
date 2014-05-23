@@ -37,8 +37,8 @@ Now the examples can be run on this example local consul node:
 $ go run examples/catalog.go
 Services: consuldiscovery.CatalogServices{consuldiscovery.CatalogService{Name:"consul"...}
 
-consul: consuldiscovery.CatalogCatalogServiceByName{consuldiscovery.CatalogServiceNode{Node:"drnic.local"...}
-simple_service: consuldiscovery.CatalogCatalogServiceByName{consuldiscovery.CatalogServiceNode{Node:"drnic.local"...}
+consul: consuldiscovery.CatalogServiceByName{consuldiscovery.CatalogServiceNode{Node:"drnic.local"...}
+simple_service: consuldiscovery.CatalogServiceByName{consuldiscovery.CatalogServiceNode{Node:"drnic.local"...}
 ```
 
 Development
