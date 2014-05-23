@@ -49,24 +49,18 @@ type HealthServiceCheck struct {
 
 // HealthByNode returns the health checks for a specific node
 func (c *Client) HealthByNode(nodeName string) (result []HealthServiceCheck, err error) {
-	if err = c.doGET("health/node/"+nodeName, &result); err != nil {
-		return
-	}
+	err = c.doGET("health/node/"+nodeName, &result)
 	return
 }
 
 // HealthByService returns a list of advertised service names and their tags
 func (c *Client) HealthByService(serviceName string) (result HealthServiceNodes, err error) {
-	if err = c.doGET("health/service/"+serviceName, &result); err != nil {
-		return
-	}
+	err = c.doGET("health/service/"+serviceName, &result)
 	return
 }
 
 // HealthByState returns the health checks with a specific state
 func (c *Client) HealthByState(state string) (checks []HealthServiceCheck, err error) {
-	if err = c.doGET("health/state/"+state, &checks); err != nil {
-		return
-	}
+	err = c.doGET("health/state/"+state, &checks)
 	return
 }
