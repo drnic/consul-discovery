@@ -6,9 +6,9 @@ import (
 )
 
 func TestHealth(t *testing.T) {
-	Convey("ServiceHealth", t, func() {
+	Convey("HealthByService", t, func() {
 		client := getClient(t)
-		nodes, err := client.ServiceHealth("simple_service")
+		nodes, err := client.HealthByService("simple_service")
 		So(err, ShouldEqual, nil)
 		So(len(nodes), ShouldEqual, 1)
 		node := nodes[0]
@@ -19,9 +19,9 @@ func TestHealth(t *testing.T) {
 		So(check.Status, ShouldEqual, "passing")
 	})
 
-  Convey("ServiceChecksByState", t, func() {
+  Convey("HealthByState", t, func() {
     client := getClient(t)
-    checks, err := client.ServiceChecksByState("critical")
+    checks, err := client.HealthByState("critical")
     So(err, ShouldEqual, nil)
     So(len(checks), ShouldEqual, 1)
   })
