@@ -50,8 +50,11 @@ func DefaultConfig() *Config {
 	}
 }
 
-// CatalogServices contains the available service names and their tags
+// catalogServicesResponse maps GET /v1/catalog/services response
 // From API response: {"consul":null,"simple_service":["tag1","tag2"]}
+type catalogServicesResponse map[string][]string
+
+// CatalogServices contains the available service names and their tags
 type CatalogServices []CatalogService
 
 // CatalogService contains a single available service name and its tags
@@ -81,17 +84,8 @@ type Catalog interface {
 }
 
 // ServiceList returns a list of advertised service names and their tags
-func (c *Client) ServiceList() CatalogServices {
-	// {"consul":null,"simple_service":["tag1","tag2"]}
-	return CatalogServices{
-		CatalogService{Name: "consul"},
-		CatalogService{Name: "simple_service"},
-	}
-}
-
-// ServiceNodes returns a list of nodes composing a service
-func (c *Client) ServiceNodes(name string) (nodes CatalogServiceNodes, err error) {
-	url := c.pathURL("catalog/service/" + name)
+func (c *Client) ServiceList() (result CatalogServices, err error) {
+	url := c.pathURL("catalog/services")
 	req := http.Request{
 		Method: "GET",
 		URL:    url,
@@ -101,7 +95,7 @@ func (c *Client) ServiceNodes(name string) (nodes CatalogServiceNodes, err error
 		return
 	}
 	if resp.StatusCode != 200 {
-		return nodes, fmt.Errorf("unexpected response code: %d", resp.StatusCode)
+		return result, fmt.Errorf("unexpected response code: %d", resp.StatusCode)
 	}
 	dumpedResponse, err := httputil.DumpResponse(resp, true)
 	fmt.Println(sanitize(string(dumpedResponse)))
@@ -113,7 +107,43 @@ func (c *Client) ServiceNodes(name string) (nodes CatalogServiceNodes, err error
 	jsonBytes, _ := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
 
-	err = json.Unmarshal(jsonBytes, &nodes)
+	services := catalogServicesResponse{}
+	err = json.Unmarshal(jsonBytes, &services)
+
+	// Convert {"name" => ["tags"]} into []CatalogService
+	for name, tags := range services {
+		service := CatalogService{Name: name, Tags: tags}
+		result = append(result, service)
+	}
+
+	return
+}
+
+// ServiceNodes returns a list of nodes composing a service
+func (c *Client) ServiceNodes(name string) (result CatalogServiceNodes, err error) {
+	url := c.pathURL("catalog/service/" + name)
+	req := http.Request{
+		Method: "GET",
+		URL:    url,
+	}
+	resp, err := c.config.HTTPClient.Do(&req)
+	if err != nil {
+		return
+	}
+	if resp.StatusCode != 200 {
+		return result, fmt.Errorf("unexpected response code: %d", resp.StatusCode)
+	}
+	dumpedResponse, err := httputil.DumpResponse(resp, true)
+	fmt.Println(sanitize(string(dumpedResponse)))
+
+	if err != nil {
+		return
+	}
+
+	jsonBytes, _ := ioutil.ReadAll(resp.Body)
+	resp.Body.Close()
+
+	err = json.Unmarshal(jsonBytes, &result)
 	return
 }
 

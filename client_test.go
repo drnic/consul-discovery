@@ -16,7 +16,8 @@ func getClient(t *testing.T) *Client {
 func TestClient(t *testing.T) {
 	Convey("ServiceList", t, func() {
 		client := getClient(t)
-		services := client.ServiceList()
+		services, err := client.ServiceList()
+		So(err, ShouldEqual, nil)
 		So(len(services), ShouldEqual, 2)
 		So(services[0].Name, ShouldEqual, "consul")
 		So(services[1].Name, ShouldEqual, "simple_service")
