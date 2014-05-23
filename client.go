@@ -90,32 +90,10 @@ type Catalog interface {
 
 // ServiceList returns a list of advertised service names and their tags
 func (c *Client) ServiceList() (result CatalogServices, err error) {
-	url := c.pathURL("catalog/services")
-	req := http.Request{
-		Method: "GET",
-		URL:    url,
-	}
-	resp, err := c.config.HTTPClient.Do(&req)
-	if err != nil {
-		return
-	}
-	if resp.StatusCode != 200 {
-		return result, fmt.Errorf("unexpected response code: %d", resp.StatusCode)
-	}
-	dumpedResponse, err := httputil.DumpResponse(resp, true)
-	if c.config.Debug {
-		fmt.Println(sanitize(string(dumpedResponse)))
-	}
-
-	if err != nil {
-		return
-	}
-
-	jsonBytes, _ := ioutil.ReadAll(resp.Body)
-	resp.Body.Close()
-
 	services := catalogServicesResponse{}
-	err = json.Unmarshal(jsonBytes, &services)
+	if err = c.doGET("catalog/services", &services); err != nil {
+		return
+	}
 
 	// Convert {"name" => ["tags"]} into []CatalogService
 	for name, tags := range services {
@@ -127,8 +105,13 @@ func (c *Client) ServiceList() (result CatalogServices, err error) {
 }
 
 // ServiceNodes returns a list of nodes composing a service
-func (c *Client) ServiceNodes(name string) (result CatalogServiceNodes, err error) {
-	url := c.pathURL("catalog/service/" + name)
+func (c *Client) ServiceNodes(name string) (nodes CatalogServiceNodes, err error) {
+	err = c.doGET("catalog/service/"+name, &nodes)
+	return
+}
+
+func (c *Client) doGET(endpoint string, data interface{}) (err error) {
+	url := c.pathURL(endpoint)
 	req := http.Request{
 		Method: "GET",
 		URL:    url,
@@ -138,12 +121,13 @@ func (c *Client) ServiceNodes(name string) (result CatalogServiceNodes, err erro
 		return
 	}
 	if resp.StatusCode != 200 {
-		return result, fmt.Errorf("unexpected response code: %d", resp.StatusCode)
+		return fmt.Errorf("unexpected response code: %d", resp.StatusCode)
 	}
 	dumpedResponse, err := httputil.DumpResponse(resp, true)
 	if c.config.Debug {
 		fmt.Println(sanitize(string(dumpedResponse)))
 	}
+
 	if err != nil {
 		return
 	}
@@ -151,7 +135,7 @@ func (c *Client) ServiceNodes(name string) (result CatalogServiceNodes, err erro
 	jsonBytes, _ := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
 
-	err = json.Unmarshal(jsonBytes, &result)
+	err = json.Unmarshal(jsonBytes, data)
 	return
 }
 
