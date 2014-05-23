@@ -27,6 +27,9 @@ type Config struct {
 	// WaitTime limits how long a Watch will block. If not provided,
 	// the agent default values will be used.
 	WaitTime time.Duration
+
+	// Debug shows HTTPClient responses if true
+	Debug bool
 }
 
 // Client provides a client to Consul for Service data
@@ -98,7 +101,9 @@ func (c *Client) ServiceList() (result CatalogServices, err error) {
 		return result, fmt.Errorf("unexpected response code: %d", resp.StatusCode)
 	}
 	dumpedResponse, err := httputil.DumpResponse(resp, true)
-	fmt.Println(sanitize(string(dumpedResponse)))
+	if c.config.Debug {
+		fmt.Println(sanitize(string(dumpedResponse)))
+	}
 
 	if err != nil {
 		return
@@ -134,8 +139,9 @@ func (c *Client) ServiceNodes(name string) (result CatalogServiceNodes, err erro
 		return result, fmt.Errorf("unexpected response code: %d", resp.StatusCode)
 	}
 	dumpedResponse, err := httputil.DumpResponse(resp, true)
-	fmt.Println(sanitize(string(dumpedResponse)))
-
+	if c.config.Debug {
+		fmt.Println(sanitize(string(dumpedResponse)))
+	}
 	if err != nil {
 		return
 	}
