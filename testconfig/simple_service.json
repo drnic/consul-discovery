@@ -1,4 +1,8 @@
 {
+    "ui_config": {
+        "enabled": true
+    },
+    "enable_script_checks": true,
     "service": {
         "name": "simple_service",
         "tags": ["tag1", "tag2"],

@@ -2,7 +2,9 @@
     "check": {
         "id": "check-passing",
         "name": "Always true",
-        "script": "true",
+        "args": [
+            "true"
+        ],
         "interval": "100s"
     }
 }

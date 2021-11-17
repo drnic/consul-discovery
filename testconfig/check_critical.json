@@ -2,7 +2,10 @@
     "check": {
         "id": "check-critical",
         "name": "Always critical",
-        "script": "exit 2",
+        "args": [
+            "exit",
+            "2"
+        ],
         "interval": "100s"
     }
 }

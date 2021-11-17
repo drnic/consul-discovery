@@ -1,8 +1,8 @@
 package consuldiscovery
 
 import (
-	"testing"
 	. "github.com/smartystreets/goconvey/convey"
+	"testing"
 )
 
 func getClient(t *testing.T) *Client {
@@ -32,6 +32,7 @@ func TestCatalog(t *testing.T) {
 		So(nodes[0].ServiceName, ShouldEqual, "simple_service")
 		So(nodes[0].ServicePort, ShouldEqual, 6666)
 		// TODO: So(nodes[0].ServiceTags, ShouldEqual, []string{"tag1", "tag2"})
+		// TODO: and other fields...
 	})
 
 }

@@ -31,6 +31,21 @@ type CatalogServiceNode struct {
 	ServiceName string
 	ServiceTags []string
 	ServicePort uint64
+
+	TaggedAddresses        map[string]string
+	NodeMeta               map[string]string
+	ID                     string
+	Datacenter             string
+	ServiceAddress         string
+	ServiceTaggedAddresses map[string]ServiceAddress
+	ServiceMeta            map[string]string
+	Namespace              string
+	Partition              string
+}
+
+type ServiceAddress struct {
+	Address string
+	Port    int
 }
 
 // CatalogServices returns a list of advertised service names and their tags
